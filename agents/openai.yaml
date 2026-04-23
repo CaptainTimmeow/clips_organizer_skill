@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Footage Labeler"
+  short_description: "Analyze and rename local footage"
+  default_prompt: "Use $video-footage-labeler to review a local footage folder and propose filenames, triage, and organization."
