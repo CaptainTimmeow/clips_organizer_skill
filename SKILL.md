@@ -82,7 +82,8 @@ Represent the result as a compact table or JSON/CSV-style manifest with fields s
 
 - `old_path`
 - `old_name`
-- `proposed_name`
+- `new_name` / `proposed_name`
+- `folder` (target theme folder, e.g., `ROBOT_COFFEE`, `SKATEBOARD_MALL`)
 - `content_theme` (e.g., ROBOT_COFFEE, SKATEBOARD, DAILY_LIFE)
 - `editorial_role`
 - `subject`
@@ -91,7 +92,10 @@ Represent the result as a compact table or JSON/CSV-style manifest with fields s
 - `location_hint`
 - `triage`
 - `group_id`
-- `transcript_snippet`
+- `transcript_snippet` (single-language)
+- `transcript_cn` (original language, when relevant)
+- `transcript_en` (English translation/transliteration)
+- `marker_color` (for NLE import)
 - `notes`
 
 Keep the output inspectable. The user should be able to understand why a proposed filename exists.

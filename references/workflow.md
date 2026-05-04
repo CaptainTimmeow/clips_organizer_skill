@@ -60,19 +60,20 @@ Suggested folder naming:
 - `11_{THEME}/` — park, leisure, nature
 - `12_{THEME}/` — daily life, market, community
 
-Within each folder, use `TakeNN` numbering.
+Within each folder, use `TakeNN` numbering. If a clip doesn't fit an existing theme, extend the sequence rather than forcing it into the wrong bucket.
 
 ## Frame Extraction Guidance
 
 Extract representative frames before proposing names:
 
 ```bash
-ffmpeg -ss {midpoint} -i input.MP4 -frames:v 1 -q:v 2 output.jpg
+ffmpeg -ss {midpoint} -i input.MP4 -frames:v 1 -q:v 2 "{original_name}_mid.jpg"
 ```
 
 - Extract mid-frame (duration / 2) for content identification
 - Extract from the start of each group to verify continuity
 - Save frames to a temporary `.analysis/frames/` folder
+- Name frames `{original_filename}_mid.jpg` so they map 1:1 to source clips
 - View frames before deciding on themes and names
 
 ## Transcript Analysis Guidance
@@ -87,6 +88,9 @@ ffmpeg -i input.MP4 -vn -acodec pcm_s16le -ar 16000 -ac 1 output.wav
 - Specify language explicitly (e.g., `--language Chinese` for Whisper)
 - Transcribe 30-second segments from the middle of clips first
 - Flag clips with recognizable dialogue for editorial priority
+- For bilingual workflows, keep both original and translated snippets:
+  - `transcript_cn`: original language transcript
+  - `transcript_en`: English translation or transliteration
 - Note: ambient noise/music may yield empty transcripts
 
 ## Metadata Inspection
@@ -148,6 +152,10 @@ Generate these manifests for non-linear editors:
 - Columns: `clip_name`, `marker_name`, `description`, `in_time`, `out_time`, `color`
 - Import via Extensions panel or third-party tools (Excalibur, Marker Import)
 
+**CSV Manifest** (Premiere marker import, spreadsheet review):
+- Columns: `old_name`, `new_name`, `folder`, `triage`, `notes`, `transcript_cn`, `transcript_en`, `marker_color`
+- Use for human review before applying renames, or for NLE marker import
+
 **JSON Manifest** (Custom scripts, Kyno, Silverstack):
 - Fields: `old_name`, `new_name`, `folder`, `triage`, `notes`, `transcript_snippet`
 - Use for auto-populating bins, metadata columns, or rough-cut timelines
@@ -155,6 +163,30 @@ Generate these manifests for non-linear editors:
 **Batch List TXT** (Premiere native):
 - Older but supported natively by Premiere Pro
 - Good for simple tapeless workflows
+
+## Session Output Structure
+
+During an active labeling session, produce a sidecar `.analysis/` folder inside the footage root:
+
+```
+.analysis/
+  frames/
+    DJI_20260503123456_0063_D_mid.jpg
+    DJI_20260503123503_0064_D_mid.jpg
+    ...
+  audio/
+    DJI_20260503123456_0063_D.wav
+    ...
+  manifest_premiere.csv
+  manifest_premiere.json
+```
+
+- `frames/`: mid-frame screenshots for visual inspection
+- `audio/`: 16kHz mono WAV extracts for transcription
+- `manifest_premiere.csv`: human-reviewable spreadsheet with rename plan, triage, and transcripts
+- `manifest_premiere.json`: machine-readable version of the same data
+
+This keeps all generated artifacts separate from the original footage and makes cleanup easy.
 
 ## Good Skill Triggers
 
